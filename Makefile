@@ -7,7 +7,7 @@ VERSION := $(shell git describe --tags --always)
 GOOS := "linux"
 GOARCH := "amd64"
 
-REGISTRY := "ccr.ccs.tencentyun.com"
+REGISTRY := "[REGISTRY_URL]"
 IMAGE_NAME := hale/$(BINARY_NAME)
 
 all: build
