@@ -18,7 +18,7 @@ const templ = `{{ $var := .ExternalURL}}{{ range $k,$v:=.Alerts }}{{if eq $v.Sta
 > <font color="info">开始时间:</font> {{$v.StartsAt.Local}}
 > <font color="info">结束时间:</font> {{$v.EndsAt.Local}}
 > <font color="info">故障主机IP:</font> {{$v.Labels.instance}}
-> <font color="info">**{{$v.annotations.description}}**</font>
+> <font color="info">**{{$v.Annotations.description}}**</font>
 {{else}}
 [PROMETHEUS-告警信息]({{$v.GeneratorURL}})
 > **[{{$v.Labels.alertname}}]({{$var}})**
