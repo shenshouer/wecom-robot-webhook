@@ -12,18 +12,23 @@ import (
 	"k8s.io/klog"
 )
 
-const templ = `Promethues Alert:
->状态:<font color=\"comment\">{{.Status}}</font>
->开始于:<font color=\"comment\">{{.StartsAt}}</font>
->Labels:
-{{ range $key, $value := .Labels }}
-	{{ $key }}:{{ $value }}
-{{end}}
->Annotations:
-{{ range $key, $value := .Annotations }}
-	{{ $key }}:{{ $value }}
-{{end}}
->详情:[点击查看]({{.GeneratorURL}})`
+const templ = `{{ $var := .ExternalURL}}{{ range $k,$v:=.Alerts }}{{if eq $v.Status "resolved"}}[PROMETHEUS-恢复信息]({{$v.GeneratorURL}})
+> **[{{$v.Labels.alertname}}]({{$var}})**
+> <font color="info">告警级别:</font> {{$v.Labels.severity}}
+> <font color="info">开始时间:</font> {{$v.StartsAt.Local}}
+> <font color="info">结束时间:</font> {{$v.EndsAt.Local}}
+> <font color="info">故障主机IP:</font> {{$v.Labels.instance}}
+> <font color="info">**{{$v.annotations.description}}**</font>
+{{else}}
+[PROMETHEUS-告警信息]({{$v.GeneratorURL}})
+> **[{{$v.Labels.alertname}}]({{$var}})**
+> <font color="warning">告警级别:</font> {{$v.Labels.severity}}
+> <font color="warning">开始时间:</font> {{$v.StartsAt.Local}}
+> <font color="warning">结束时间:</font> {{$v.EndsAt.Local}}
+> <font color="warning">故障主机IP:</font> {{$v.Labels.instance}}
+> <font color="warning">**{{$v.Annotations.description}}**</font>
+{{end}}{{ end }}
+{{ $urimsg:=""}}{{ range $key,$value:=.CommonLabels }}{{$urimsg =  print $urimsg $key "%3D%22" $value "%22%2C" }}{{end}}[*** 点我屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)`
 
 // Parameter
 var wechatWorkURL string
@@ -61,28 +66,35 @@ func webhook(w http.ResponseWriter, r *http.Request) {
 		responseWithJson(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	jsondata, _ := json.Marshal(data)
+	klog.Infoln(string(jsondata))
+	// for _, alert := range data.Alerts {
+	// 	klog.Infof("Alert: status=%s,Labels=%v,Annotations=%v", alert.Status, alert.Labels, alert.Annotations)
 
-	for _, alert := range data.Alerts {
-		klog.Infof("Alert: status=%s,Labels=%v,Annotations=%v", alert.Status, alert.Labels, alert.Annotations)
-
-		if err := alertMsg(alert); err != nil {
-			responseWithJson(w, http.StatusInternalServerError, "failed")
-		}
+	if err := alertMsg(data); err != nil {
+		responseWithJson(w, http.StatusInternalServerError, "failed")
 	}
+	// }
 
 	responseWithJson(w, http.StatusOK, "success")
 }
 
-func alertMsg(alert template.Alert) error {
+func alertMsg(alert template.Data) error {
 	msg := SendMsg{
 		Msgtype: "markdown",
 	}
 	var doc bytes.Buffer
-	t, err := gotemplate.New("alert").Parse(templ)
+	t, err := gotemplate.New("alert").Funcs(gotemplate.FuncMap{"SplitString": func(pstring string, start int, stop int) string {
+		if stop < 0 {
+			return pstring[start : len(pstring)+stop]
+		}
+		return pstring[start:stop]
+	}}).Parse(templ)
 	if err != nil {
 		klog.Errorf("Webhook: initial go template error: %v", err.Error())
 		return err
 	}
+
 	if err := t.Execute(&doc, alert); err != nil {
 		klog.Errorf("Webhook: go template execute error: %v", err.Error())
 		return err

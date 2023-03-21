@@ -1,3 +1,4 @@
 FROM alpine:latest
+RUN apk add --no-cache ca-certificates tzdata
 COPY ./bin/wecom-robot-webhook /usr/bin
-ENTRYPOINT ["/wecom-robot-webhook"]
+CMD ["wecom-robot-webhook"]

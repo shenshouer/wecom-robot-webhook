@@ -7,8 +7,8 @@ VERSION := $(shell git describe --tags --always)
 GOOS := "linux"
 GOARCH := "amd64"
 
-REGISTRY := "[REGISTRY_URL]"
-IMAGE_NAME := hale/$(BINARY_NAME)
+REGISTRY := "docker.io"
+IMAGE_NAME := shenshouer/$(BINARY_NAME)
 
 all: build
 

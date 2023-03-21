@@ -15,7 +15,7 @@ spec:
         app: webhook-wechat-work
     spec:
       containers:
-        - image: [IMAGE_PATH]
+        - image: docker.io/shenshouer/wecom-robe-webhook
           imagePullPolicy: Always
           name: webhook
           args:
