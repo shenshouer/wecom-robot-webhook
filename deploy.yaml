@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webhook-wechat-work
+  name: webhook-wechat-work
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-wechat-work
+  template:
+    metadata:
+      labels:
+        app: webhook-wechat-work
+    spec:
+      containers:
+        - image: [IMAGE_PATH]
+          imagePullPolicy: Always
+          name: webhook
+          args:
+            - -url
+            - <webhook-url> 
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: webhook-wechat-work
+spec:
+  selector:
+    app: webhook-wechat-work
+  type: NodePort
+  ports:
+  - name: tcp-80-8080
+    port: 80
+    targetPort: 8080
