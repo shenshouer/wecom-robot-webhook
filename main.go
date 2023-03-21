@@ -66,15 +66,10 @@ func webhook(w http.ResponseWriter, r *http.Request) {
 		responseWithJson(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	jsondata, _ := json.Marshal(data)
-	klog.Infoln(string(jsondata))
-	// for _, alert := range data.Alerts {
-	// 	klog.Infof("Alert: status=%s,Labels=%v,Annotations=%v", alert.Status, alert.Labels, alert.Annotations)
 
 	if err := alertMsg(data); err != nil {
 		responseWithJson(w, http.StatusInternalServerError, "failed")
 	}
-	// }
 
 	responseWithJson(w, http.StatusOK, "success")
 }
