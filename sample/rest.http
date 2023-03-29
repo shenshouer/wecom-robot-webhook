@@ -1,0 +1,68 @@
+POST http://10.252.238.83/webhook HTTP/1.1
+Content-Type: application/json
+
+{
+    "receiver": "sit13",
+    "status": "firing",
+    "alerts": [
+        {
+            "status": "firing",
+            "labels": {
+                "alertname": "KubePodCrashLooping",
+                "container": "ams-5bdd6c56fb-czdl2",
+                "instance": "10.252.252.41:8443",
+                "job": "kube-state-metrics",
+                "namespace": "sit13",
+                "pod": "ams-5bdd6c56fb-czdl2",
+                "prometheus": "monitoring/k8s",
+                "reason": "CrashLoopBackOff",
+                "severity": "warning",
+                "uid": "527918d8-72d9-4ece-b520-fe7bc0e7ce49"
+            },
+            "annotations": {
+                "description": "Pod sit13/ams-5bdd6c56fb-czdl2 (ams-5bdd6c56fb-czdl2) is in waiting state (reason: \"CrashLoopBackOff\").",
+                "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+                "summary": "Pod is crash looping."
+            },
+            "startsAt": "2023-03-21T02:52:24.308Z",
+            "endsAt": "0001-01-01T00:00:00Z",
+            "generatorURL": "https://prom-test-k8s.eeo-inc.com/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B1m%5D%29+%3E%3D+1&g0.tab=1",
+            "fingerprint": "850997ab6a31e39c"
+        },
+        {
+            "status": "firing",
+            "labels": {
+                "alertname": "KubeContainerWaiting",
+                "container": "ams-5bdd6c56fb-czdl2",
+                "namespace": "sit13",
+                "pod": "ams-5bdd6c56fb-czdl2",
+                "prometheus": "monitoring/k8s",
+                "severity": "warning"
+            },
+            "annotations": {
+                "description": "pod/ams-5bdd6c56fb-czdl2 in namespace sit13 on container ams-5bdd6c56fb-czdl2 has been in waiting state for longer than 1 hour.",
+                "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontainerwaiting",
+                "summary": "Pod container waiting longer than 1 hour"
+            },
+            "startsAt": "2023-03-21T03:21:24.308Z",
+            "endsAt": "0001-01-01T00:00:00Z",
+            "generatorURL": "https://prom-test-k8s.eeo-inc.com/graph?g0.expr=sum+by+%28namespace%2C+pod%2C+container%2C+cluster%29+%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%7D%29+%3E+0&g0.tab=1",
+            "fingerprint": "93e16c9b271856fd"
+        }
+    ],
+    "groupLabels": {
+        "namespace": "sit13"
+    },
+    "commonLabels": {
+        "container": "ams-5bdd6c56fb-czdl2",
+        "namespace": "sit13",
+        "pod": "ams-5bdd6c56fb-czdl2",
+        "prometheus": "monitoring/k8s",
+        "severity": "warning"
+    },
+    "commonAnnotations": {},
+    "externalURL": "https://alert-test-k8s.eeo-inc.com",
+    "version": "4",
+    "groupKey": "{}:{namespace=\"sit13\"}",
+    "truncatedAlerts": 0
+}
