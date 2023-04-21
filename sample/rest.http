@@ -1,4 +1,5 @@
 POST http://10.252.238.83/webhook HTTP/1.1
+# POST http://localhost:8080/webhook HTTP/1.1
 Content-Type: application/json
 
 {
@@ -8,19 +9,19 @@ Content-Type: application/json
         {
             "status": "firing",
             "labels": {
-                "alertname": "KubePodCrashLooping",
-                "container": "ams-5bdd6c56fb-czdl2",
+                "alertname": "这是一个测试报警，请忽略1",
+                "container": "business",
                 "instance": "10.252.252.41:8443",
                 "job": "kube-state-metrics",
                 "namespace": "sit13",
-                "pod": "ams-5bdd6c56fb-czdl2",
+                "pod": "eeoconv-ippt-7c58c48776-w58xh",
                 "prometheus": "monitoring/k8s",
                 "reason": "CrashLoopBackOff",
                 "severity": "warning",
                 "uid": "527918d8-72d9-4ece-b520-fe7bc0e7ce49"
             },
             "annotations": {
-                "description": "Pod sit13/ams-5bdd6c56fb-czdl2 (ams-5bdd6c56fb-czdl2) is in waiting state (reason: \"CrashLoopBackOff\").",
+                "description": "Pod sit13/eeoconv-ippt-7c58c48776-w58xh (eeoconv-ippt-7c58c48776-w58xh) is in waiting state (reason: \"CrashLoopBackOff\").",
                 "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
                 "summary": "Pod is crash looping."
             },
@@ -32,15 +33,15 @@ Content-Type: application/json
         {
             "status": "firing",
             "labels": {
-                "alertname": "KubeContainerWaiting",
-                "container": "ams-5bdd6c56fb-czdl2",
+                "alertname": "这是一个测试报警，请忽略1",
+                "container": "business",
                 "namespace": "sit13",
-                "pod": "ams-5bdd6c56fb-czdl2",
+                "pod": "eeoconv-ippt-7c58c48776-w58xh",
                 "prometheus": "monitoring/k8s",
                 "severity": "warning"
             },
             "annotations": {
-                "description": "pod/ams-5bdd6c56fb-czdl2 in namespace sit13 on container ams-5bdd6c56fb-czdl2 has been in waiting state for longer than 1 hour.",
+                "description": "pod/eeoconv-ippt-7c58c48776-w58xh in namespace sit13 on container eeoconv-ippt-7c58c48776-w58xh has been in waiting state for longer than 1 hour.",
                 "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontainerwaiting",
                 "summary": "Pod container waiting longer than 1 hour"
             },
@@ -54,9 +55,9 @@ Content-Type: application/json
         "namespace": "sit13"
     },
     "commonLabels": {
-        "container": "ams-5bdd6c56fb-czdl2",
+        "container": "business",
         "namespace": "sit13",
-        "pod": "ams-5bdd6c56fb-czdl2",
+        "pod": "eeoconv-ippt-7c58c48776-w58xh",
         "prometheus": "monitoring/k8s",
         "severity": "warning"
     },

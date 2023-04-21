@@ -143,20 +143,23 @@ func getInfos(podName string, namespace string, externalURL string) (*AppGrfanaK
 
 	data, err := json.Marshal(params)
 	if err != nil {
-		klog.Errorln(err)
+		klog.Errorf("getInfos: podName: %s, namespace: %s, externalURL: %s", podName, namespace, externalURL)
 		return nil, err
 	}
-	resp, err := http.Post(fmt.Sprintf("%s/api/v1/endpoint_info", endpointAlertInfo), "application/json", bytes.NewBuffer(data))
-	if err != nil {
-		klog.Errorln(err)
-		return nil, err
-	}
-	defer resp.Body.Close()
+
 	var info AppGrfanaKibanaInfo
-	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
-		klog.Errorln(err)
+	req_url := fmt.Sprintf("%s/api/v1/endpoint_info", endpointAlertInfo)
+	if resp, err := http.Post(req_url, "application/json", bytes.NewBuffer(data)); err != nil {
+		klog.Errorf("请求%s 错误: %v", req_url, err)
 		return nil, err
+	} else {
+		defer resp.Body.Close()
+		if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
+			klog.Errorln(err)
+			return nil, err
+		}
 	}
+
 	info.ParamGetAppGrfanaKibanaInfo = params
 	return &info, nil
 }
