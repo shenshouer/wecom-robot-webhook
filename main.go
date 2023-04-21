@@ -196,14 +196,16 @@ func alertMsg(data template.Data) error {
 	for _, alert := range data.Alerts {
 		ns := alert.Labels["namespace"]
 		alertData := TemplateData{Alert: alert, ExternalURL: data.ExternalURL}
-		if info, err := getInfos(alert.Labels["pod"], ns, data.ExternalURL); err != nil {
-			klog.Errorln(err)
-		} else {
-			nsstr := strings.Join(namespaces, ",")
-			if !strings.Contains(nsstr, ns) {
-				info.Kibana = ""
+		if ns != "" && alert.Labels["pod"] != "" {
+			if info, err := getInfos(alert.Labels["pod"], ns, data.ExternalURL); err != nil {
+				klog.Errorln(err)
+			} else {
+				nsstr := strings.Join(namespaces, ",")
+				if !strings.Contains(nsstr, ns) {
+					info.Kibana = ""
+				}
+				alertData.AppGrfanaKibanaInfo = *info
 			}
-			alertData.AppGrfanaKibanaInfo = *info
 		}
 		jsondata, _ := json.Marshal(alertData)
 		klog.Infof("接受到的报警内容: %s", string(jsondata))
