@@ -158,7 +158,7 @@ func getInfos(podName string, namespace string, externalURL string) (*AppGrfanaK
 			if data, e := io.ReadAll(resp.Body); e != nil {
 				klog.Errorf("请求%s 解析resp错误: %v", req_url, e)
 			} else {
-				klog.Errorf("请求%s 错误, resp: %s", req_url, string(data))
+				klog.Errorf("请求%s 错误 statusCode: %d resp: %s", req_url, resp.StatusCode, string(data[:]))
 			}
 		} else {
 			if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
@@ -205,8 +205,8 @@ func alertMsg(data template.Data) error {
 			}
 			alertData.AppGrfanaKibanaInfo = *info
 		}
-		// jsondata, _ := json.Marshal(alertData)
-		// klog.Infof("==>>%s", string(jsondata))
+		jsondata, _ := json.Marshal(alertData)
+		klog.Infof("接受到的报警内容: %s", string(jsondata))
 		// t.Execute(os.Stderr, alertData)
 		if err := t.Execute(&doc, alertData); err != nil {
 			klog.Errorf("Webhook: go template execute error: %v", err.Error())
@@ -215,6 +215,7 @@ func alertMsg(data template.Data) error {
 		msg.Markdown = &MsgContent{Content: doc.String()}
 
 		if err := sendToWechatWork(msg); err != nil {
+			klog.Errorf("发送报错: %v", err.Error())
 			return err
 		}
 	}
