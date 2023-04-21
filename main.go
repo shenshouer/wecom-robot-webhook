@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	gotemplate "text/template"
@@ -151,12 +152,18 @@ func getInfos(podName string, namespace string, externalURL string) (*AppGrfanaK
 	req_url := fmt.Sprintf("%s/api/v1/endpoint_info", endpointAlertInfo)
 	if resp, err := http.Post(req_url, "application/json", bytes.NewBuffer(data)); err != nil {
 		klog.Errorf("请求%s 错误: %v", req_url, err)
-		return nil, err
 	} else {
 		defer resp.Body.Close()
-		if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
-			klog.Errorln(err)
-			return nil, err
+		if resp.StatusCode != http.StatusOK {
+			if data, e := io.ReadAll(resp.Body); e != nil {
+				klog.Errorf("请求%s 解析resp错误: %v", req_url, e)
+			} else {
+				klog.Errorf("请求%s 错误, resp: %s", req_url, string(data))
+			}
+		} else {
+			if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
+				klog.Errorln(err)
+			}
 		}
 	}
 
