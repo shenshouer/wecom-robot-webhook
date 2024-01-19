@@ -2,23 +2,24 @@ BINARY_NAME := $(shell basename "$(PWD)")
 GOBASE := $(shell pwd)
 GOBIN := $(GOBASE)/bin
 
-VERSION := $(shell git describe --tags --always)
+#VERSION := $(shell git describe --tags --always)
+VERSION := v0.8
 
 GOOS := "linux"
 GOARCH := "amd64"
 
-REGISTRY := "docker.io"
-IMAGE_NAME := shenshouer/$(BINARY_NAME)
+REGISTRY := "registry.eeo-inc.com"
+IMAGE_NAME := devops/$(BINARY_NAME)
 
 all: build
 
 build:
 	@echo "  >  Building binary..."
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(GOBIN)/$(BINARY_NAME) main.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -o $(GOBIN)/$(BINARY_NAME) main.go
 
 image:
 	@echo "  >  Building image..."
-	@docker build -t $(REGISTRY)/$(IMAGE_NAME):$(VERSION) .
+	@docker build --platform linux/amd64 -t $(REGISTRY)/$(IMAGE_NAME):$(VERSION) .
 
 push:
 	@echo "  >  Pushing image..."

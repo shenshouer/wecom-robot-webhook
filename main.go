@@ -118,11 +118,13 @@ func webhook(w http.ResponseWriter, r *http.Request) {
 	data := template.Data{}
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		klog.Errorf("decode alert data error: %v", err)
 		responseWithJson(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := alertMsg(data); err != nil {
+		klog.Errorf("handle alert data error: %v", err)
 		responseWithJson(w, http.StatusInternalServerError, "failed")
 	}
 
